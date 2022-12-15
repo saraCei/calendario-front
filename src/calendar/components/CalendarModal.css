@@ -1,0 +1,42 @@
+.ReactModalPortal>div {
+
+    opacity: 0;
+
+}
+
+.ReactModalPortal .ReactModal__Overlay {
+
+  
+
+    transition: opacity .2s ease-in-out;
+
+    z-index: 999;
+
+}
+.ReactModalPortal .ReactModal__Overlay--after-open {
+
+    opacity: 1;
+
+}
+
+.ReactModalPortal .ReactModal__Overlay--before-close {
+
+    opacity: 0;
+
+}
+
+.modal{
+    background-color: white;
+    display: inline;
+    max-width: 50%;
+    max-height: 650px;
+    padding: 20px;
+}
+
+.modal-fondo{
+    background-color: rgba(0,0,0,0.3);
+    position: fixed;
+    top:0;
+    left:0;
+    right: 0;
+}
