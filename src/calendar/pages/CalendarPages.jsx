@@ -10,8 +10,7 @@ import {translateMessages} from '../helpers/translateMessages'
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { CalendarModal } from '../components/CalendarModal'
-
-
+import { useUiStore } from '../hooks'
 
 const locales = {
   'es': esEs,
@@ -43,6 +42,8 @@ export const CalendarPages = () => {
   const [lastView, setLastView] =     
   useState(localStorage.getItem('lastView') || 'week')
 
+  const {openModal} = useUiStore()
+
   const eventStyleGetter=(event,start,end,isSelected)=>{
 
     const style={
@@ -53,7 +54,8 @@ export const CalendarPages = () => {
   }
 
   const onDblClick=(ev)=>{
-    console.log(ev)
+    // console.log(ev)
+    openModal()
   }
 
   const onSelect=(ev)=>{
