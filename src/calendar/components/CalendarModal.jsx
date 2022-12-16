@@ -1,5 +1,5 @@
-import Modal from 'react-modal/lib/components/Modal';
-import { useState } from 'react';
+import Modal from 'react-modal';
+import { useEffect, useState } from 'react';
 import DatePicker, {registerLocale} from "react-datepicker";
 import { addHours, differenceInSeconds } from 'date-fns';
 import es from 'date-fns/locale/es';
@@ -7,7 +7,8 @@ import es from 'date-fns/locale/es';
 
 import "react-datepicker/dist/react-datepicker.css";
 import './CalendarModal.css'
-import { useUiStore } from '../hooks';
+import { useUiStore, useCalendarStore } from '../hooks';
+
 
 
 registerLocale('es', es)
@@ -30,6 +31,8 @@ export const CalendarModal = () => {
   const {isModalOpen, closeModal} = useUiStore()
   // const [isOpen, setIsOpen] = useState(true)
 
+  const {activeEvent,startSavingEvent}=useCalendarStore()
+
   const [error, setError] = useState([])
 
   const [formValues, setFormValues] = useState({
@@ -38,6 +41,13 @@ export const CalendarModal = () => {
     start: new Date(),
     end: addHours(new Date(), 2)
   })
+
+  useEffect(()=>{
+    if(activeEvent!==null){  // = cuando haya un evento seleccionado
+      setFormValues({
+        ...activeEvent})
+    }
+  },[activeEvent]) 
 
   const onCloseModal=()=>{
     console.log('cerrando modal')
@@ -60,9 +70,10 @@ export const CalendarModal = () => {
   const handleSubmit=(ev)=>{
     ev.preventDefault()
 
+    setError([]); //setear los errores
+
     const difference = differenceInSeconds(formValues.end, formValues.start);
 
-    setError([]); //setear los errores
 
     if(isNaN(difference) || difference<=0 || formValues.title.trim().length<=0){
 
@@ -70,8 +81,10 @@ export const CalendarModal = () => {
       if(formValues.title.trim().length<=0) setError((er)=>[...er, 'Debes escribir el título'])
       return 
     }
+
+    startSavingEvent(formValues)
     // setIsOpen(false)
-    onCloseModal()
+    closeModal()
   }
 
 
@@ -134,7 +147,7 @@ export const CalendarModal = () => {
             <label>Descripción</label>
             <textarea
               type="text"
-              rows='5'
+              rows='4'
               className= "form-control"
               placeholder='Descripción del evento'
               name='description'

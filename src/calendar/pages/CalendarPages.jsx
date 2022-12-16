@@ -1,16 +1,18 @@
 import React, {useState} from 'react'
-import { EventBox, Navbar } from '../components/'
-
-import { dateFnsLocalizer } from 'react-big-calendar'
-import Calendar from 'react-big-calendar/lib/Calendar'
+import { EventBox, Navbar, CalendarModal } from '../components/'
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 import { format, parse, startOfWeek, getDay, addHours } from 'date-fns'
+
 import esEs from 'date-fns/locale/es'
 import {translateMessages} from '../helpers/translateMessages'
 
+import { useUiStore, useCalendarStore } from '../hooks'
+import { BtnAddEvent } from '../components/BtnAddEvent'
+import { BtnDeleteEvent } from '../components/BtnDeleteEvent'
+
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { CalendarModal } from '../components/CalendarModal'
-import { useUiStore } from '../hooks'
 
 const locales = {
   'es': esEs,
@@ -24,18 +26,18 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-const eventsList = [
-  {
-    title:'titulo desde eventList',
-    description:'Descripción desde eventList',
-    start: new Date(),
-    end: addHours(new Date(),2),
-    user:{
-      _id:'1234',
-      name:'Usuario'
-    }
-  }
-]
+// const eventsList = [
+//   {
+//     title:'titulo desde eventList',
+//     description:'Descripción desde eventList',
+//     start: new Date(),
+//     end: addHours(new Date(),2),
+//     user:{
+//       _id:'1234',
+//       name:'Usuario'
+//     }
+//   }
+// ]
 
 export const CalendarPages = () => {
 
@@ -43,13 +45,13 @@ export const CalendarPages = () => {
   useState(localStorage.getItem('lastView') || 'week')
 
   const {openModal} = useUiStore()
+  const {events, setActiveEvent}=useCalendarStore()
 
   const eventStyleGetter=(event,start,end,isSelected)=>{
 
     const style={
       backgroundColor:'green',
     }
-
     return style
   }
 
@@ -60,6 +62,7 @@ export const CalendarPages = () => {
 
   const onSelect=(ev)=>{
     console.log({click:ev})
+    setActiveEvent(ev)
   }
 
   const onViewChange=(ev)=>{
@@ -71,10 +74,12 @@ export const CalendarPages = () => {
     <>
         <Navbar/>
         <div className='container my-5'>
+          <BtnAddEvent/>
            <Calendar
             culture='es'
             localizer={localizer}
-            events={eventsList}
+            // events={eventsList}
+            events={events}
             starAccessor="start"
             endAccessor="end"
             style={{ height:500 }}
@@ -91,6 +96,8 @@ export const CalendarPages = () => {
            />
 
             <CalendarModal/>
+
+            <BtnDeleteEvent/>
 
         </div>
     </>
